@@ -34,11 +34,14 @@ public class Movement : MonoBehaviourPunCallbacks, IPunObservable
     {
         characterController = GetComponent<CharacterController>();
         tr = GetComponent<Transform>();
-        animator = GetComponent<Animator>();
+        //animator = GetComponent<Animator>();
         cam = Camera.main;
 
         virtualCamera = GameObject.FindObjectOfType<CinemachineVirtualCamera>();
         pv = GetComponent<PhotonView>();
+
+        Debug.Log($"pv.IsMine : : : {pv.IsMine}");
+        Debug.Log($"pv.IsOwnerActive : : : {pv.IsOwnerActive}");
 
         // PhotonView가 자신의 것일 경우 시네머신 가상카메라를 연결
         if (pv.IsMine)
@@ -54,13 +57,14 @@ public class Movement : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (pv.IsMine)
         {
+            //pv.RPC("Move", RpcTarget.All, null);
             Move();
         }
         else
         {
             tr.position = Vector3.Lerp(tr.position, receivePos, Time.deltaTime * damping);
             tr.rotation = Quaternion.Slerp(tr.rotation, receiveRot, Time.deltaTime * damping);
-            tr.localScale = Vector3.Lerp(tr.localScale, receiveScale, Time.deltaTime * damping);
+            //tr.localScale = Vector3.Lerp(tr.localScale, receiveScale, Time.deltaTime * damping);
         }
     }
 
@@ -77,22 +81,20 @@ public class Movement : MonoBehaviourPunCallbacks, IPunObservable
         characterController.Move(moveDir * moveSpeed * Time.deltaTime);
 
 
-        float forward = Vector3.Dot(moveDir, tr.up);
-        float right = Vector3.Dot(moveDir, tr.right);
+        //float forward = Vector3.Dot(moveDir, tr.up);
+        //float right = Vector3.Dot(moveDir, tr.right);
 
-        if (h < 0)
-        {
-            //tr.rotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
-            GetComponent<SpriteRenderer>().flipX = true;
-        }
-        else if (h > 0)
-        {
-            //tr.rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
-            GetComponent<SpriteRenderer>().flipX = false;
-        }
+        //if (h < 0)
+        //{
+        //    GetComponent<SpriteRenderer>().flipX = true;
+        //}
+        //else if (h > 0)
+        //{
+        //    GetComponent<SpriteRenderer>().flipX = false;
+        //}
 
-        animator.SetInteger("MoveX", (int)right);
-        animator.SetInteger("MoveY", (int)forward);
+        //animator.SetInteger("MoveX", (int)right);
+        //animator.SetInteger("MoveY", (int)forward);
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
@@ -102,20 +104,20 @@ public class Movement : MonoBehaviourPunCallbacks, IPunObservable
         {
             stream.SendNext(tr.position);
             stream.SendNext(tr.rotation);
-            stream.SendNext(tr.localScale);
+            //stream.SendNext(tr.localScale);
         }
         else
         {
             receivePos = (Vector3)stream.ReceiveNext();
             receiveRot = (Quaternion)stream.ReceiveNext();
-            receiveScale = (Vector3)stream.ReceiveNext();
+            //receiveScale = (Vector3)stream.ReceiveNext();
         }
     }
 
     IEnumerator PlayerDie()
     {
         characterController.enabled = false;
-        animator.SetTrigger("Die");
+        //animator.SetTrigger("Die");
 
         yield return new WaitForSeconds(1.25f);
 
@@ -128,7 +130,7 @@ public class Movement : MonoBehaviourPunCallbacks, IPunObservable
         if (hit.transform.CompareTag("Feed"))
         {
             currentScale += 1;
-            tr.localScale += new Vector3(0.25f, 0.25f, 0.25f);
+            //tr.localScale += new Vector3(0.25f, 0.25f, 0.25f);
             Destroy(hit.gameObject);
 
             GameObject.Find("FeedSpawn").GetComponent<FeedSpawn>().RandomFeedSpawn();

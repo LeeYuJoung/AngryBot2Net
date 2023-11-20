@@ -24,13 +24,18 @@ public class GameManager : MonoBehaviourPunCallbacks
         gameoverExit.onClick.AddListener(() => OnExitClick());
     }
 
+    private void Start()
+    {
+        PhotonNetwork.IsMessageQueueRunning = true;
+    }
+
     void CreatePlayer()
     {
         Transform[] points = GameObject.Find("SpawnPointGroup").GetComponentsInChildren<Transform>();
         int idx = Random.Range(0, points.Length);
 
         // 네트워크상에 캐릭터 생성
-        PhotonNetwork.Instantiate("Player", points[idx].position, points[idx].rotation, 0);
+        PhotonNetwork.Instantiate("Player_0", points[idx].position, points[idx].rotation, 0);
     }
 
     // 룸 접속 정보 출력

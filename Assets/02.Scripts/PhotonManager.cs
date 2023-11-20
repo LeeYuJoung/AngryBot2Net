@@ -21,9 +21,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     void Awake()
     {
         // 마스터 클라이언트의 씬 자동 동기화 옵션
-        PhotonNetwork.AutomaticallySyncScene = true;
         PhotonNetwork.GameVersion = version;
-        PhotonNetwork.NickName = userID;
 
         // 포톤 서버와의 데이터의 초당 전송 횟수
         Debug.Log(PhotonNetwork.SendRate);
@@ -34,6 +32,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         if(PhotonNetwork.IsConnected ==  false)
         {
             PhotonNetwork.ConnectUsingSettings();
+            PhotonNetwork.AutomaticallySyncScene = true;
         }
     }
 
@@ -113,7 +112,8 @@ public class PhotonManager : MonoBehaviourPunCallbacks
 
         if(PhotonNetwork.IsMasterClient)
         {
-            PhotonNetwork.LoadLevel("Main");
+            PhotonNetwork.IsMessageQueueRunning = false;
+            PhotonNetwork.LoadLevel("Main"); 
         }
     }
 
