@@ -17,7 +17,10 @@ public class GameManager : MonoBehaviourPunCallbacks
 
     void Awake()
     {
-        CreatePlayer();
+        if(PhotonNetwork.IsMasterClient)
+        {
+            CreatePlayer();
+        }
         SetRoomInfo();
 
         exitButton.onClick.AddListener(() => OnExitClick());
@@ -55,6 +58,14 @@ public class GameManager : MonoBehaviourPunCallbacks
     public override void OnLeftRoom()
     {
         SceneManager.LoadScene(0);
+    }
+
+    public override void OnJoinedRoom()
+    {
+        if (!PhotonNetwork.IsMasterClient)
+        {
+            CreatePlayer();
+        }
     }
 
     // 룸을 새로운 네트워크 유저가 접속했을 때 호출되는 콜백 함수
